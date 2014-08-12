@@ -104,6 +104,15 @@ function views_pdf_views_plugins() {
         'type'         => 'pdf',
         'help topic'   => 'style-row-fields',
       ),
+      'pdf_grid_fields' => array(
+        'title'        => t('PDF Grid Fields'),
+        'help'         => t('Displays the fields in a column grid.'),
+        'handler'      => 'GridFields',
+        'uses fields'  => TRUE,
+        'uses options' => TRUE,
+        'type'         => 'pdf',
+        'help topic'   => 'style-row-fields',
+      ),
     ),
   );
 }
