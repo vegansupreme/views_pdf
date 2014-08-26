@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\views_pdf\Plugin\views\row\Fields.
+ * Contains \Drupal\views_pdf\Plugin\views\row\GridFields.
  */
 
 // We can't use name space in views 7.x-x.x
