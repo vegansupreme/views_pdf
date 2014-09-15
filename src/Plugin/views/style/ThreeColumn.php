@@ -190,7 +190,7 @@ class ThreeColumn extends views_plugin_style {
           if (isset($this->row_plugin->options['formats'][$field_id])) {
             $options = $this->row_plugin->options['formats'][$field_id];
           }
-          $this->view->pdf->drawGridContent($set['group'], $options, $this->view);
+          $this->view->pdf->drawContent($set['group'], $options, $this->view);
         }
 
         if ($this->uses_row_plugin()) {
