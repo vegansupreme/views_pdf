@@ -25,10 +25,8 @@ class ThreeColumn extends views_plugin_style {
     $options = parent::option_definition();
 
     $options['columns'] = array('default' => '4');
-    $options['alignment'] = array('default' => 'horizontal');
-    $options['fill_single_line'] = array('default' => TRUE, 'bool' => TRUE);
-    $options['summary'] = array('default' => '');
-    $options['caption'] = array('default' => '');
+    $options['formats']          = array('default' => array());
+
 
     return $options;
   }
@@ -39,6 +37,40 @@ class ThreeColumn extends views_plugin_style {
    */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
+    
+     $options = $this->display->handler->get_field_labels();
+    $fields  = $this->display->handler->get_option('fields');
+
+    $fonts = array_merge(
+      array(
+        'default' => t('-- Default --')
+      ),
+      \Drupal\views_pdf\ViewsPdfBase::getAvailableFontsCleanList());
+
+    $font_styles = array(
+      'b' => t('Bold'),
+      'i' => t('Italic'),
+      'u' => t('Underline'),
+      'd' => t('Line through'),
+      'o' => t('Overline'),
+    );
+    
+    $align = array(
+      'L' => t('Left'),
+      'C' => t('Center'),
+      'R' => t('Right'),
+      'J' => t('Justify'),
+    );
+
+    $hyphenate = array(
+      'none' => t('None'),
+      'auto' => t('Detect automatically'),
+    );
+    $hyphenate = array_merge(
+      $hyphenate,
+      \Drupal\views_pdf\ViewsPdfBase::getAvailableHyphenatePatterns()
+    );
+    
     $form['columns'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of columns'),
@@ -46,34 +78,75 @@ class ThreeColumn extends views_plugin_style {
       '#required' => TRUE,
       '#element_validate' => array('views_element_validate_integer'),
     );
-    $form['alignment'] = array(
-      '#type' => 'radios',
-      '#title' => t('Alignment'),
-      '#options' => array('horizontal' => t('Horizontal'), 'vertical' => t('Vertical')),
-      '#default_value' => $this->options['alignment'],
-      '#description' => t('Horizontal alignment will place items starting in the upper left and moving right. Vertical alignment will place items starting in the upper left and moving down.'),
-    );
+    
+      $form['formats'][$field]['text'] = array(
+        '#type'        => 'fieldset',
+        '#title'       => t('Text Settings'),
+        '#collapsed'   => FALSE,
+        '#collapsible' => TRUE,
+      );
 
-    $form['fill_single_line'] = array(
-      '#type' => 'checkbox',
-      '#title' => t('Fill up single line'),
-      '#description' => t('If you disable this option, a grid with only one row will have the same number of table cells (<TD>) as items. Disabling it can cause problems with your CSS.'),
-      '#default_value' => !empty($this->options['fill_single_line']),
-    );
+      $form['formats'][$field]['text']['font_size']   = array(
+        '#type'          => 'textfield',
+        '#title'         => t('Font Size'),
+        '#size'          => 10,
+        '#default_value' => isset($this->options['formats'][$field]['text']['font_size']) ? $this->options['formats'][$field]['text']['font_size'] : '',
+      );
+      $form['formats'][$field]['text']['font_family'] = array(
+        '#type'          => 'select',
+        '#title'         => t('Font Family'),
+        '#required'      => TRUE,
+        '#options'       => $fonts,
+        '#size'          => 5,
+        '#default_value' => isset($this->options['formats'][$field]['text']['font_family']) ? $this->options['formats'][$field]['text']['font_family'] : 'default',
+      );
+      $form['formats'][$field]['text']['font_style']  = array(
+        '#type'          => 'checkboxes',
+        '#title'         => t('Font Style'),
+        '#options'       => $font_styles,
+        '#size'          => 10,
+        '#default_value' => !isset($this->options['formats'][$field]['text']['font_style']) ? $this->display->handler->get_option('default_font_style') : $this->options['formats'][$field]['text']['font_style'],
+      );
+      $form['formats'][$field]['text']['align']       = array(
+        '#type'          => 'radios',
+        '#title'         => t('Alignment'),
+        '#options'       => $align,
+        '#default_value' => !isset($this->options['formats'][$field]['text']['align']) ? $this->display->handler->get_option('default_text_align') : $this->options['formats'][$field]['text']['align'],
+      );
+      $form['formats'][$field]['text']['hyphenate']   = array(
+        '#type'          => 'select',
+        '#title'         => t('Text Hyphenation'),
+        '#options'       => $hyphenate,
+        '#description'   => t('If you want to use hyphenation, then you need to download from <a href="@url">ctan.org</a> your needed pattern set. Then upload it to the dir "hyphenate_patterns" in the TCPDF lib directory. Perhaps you need to create the dir first. If you select the automated detection, then we try to get the language of the current node and select an appropriate hyphenation pattern.', array('@url' => 'http://www.ctan.org/tex-archive/language/hyph-utf8/tex/generic/hyph-utf8/patterns/tex')),
+        '#default_value' => !isset($this->options['formats'][$field]['text']['hyphenate']) ? $this->display->handler->get_option('default_text_hyphenate') : $this->options['formats'][$field]['text']['hyphenate'],
+      );
+      $form['formats'][$field]['text']['color']       = array(
+        '#type'          => 'textfield',
+        '#title'         => t('Text Color'),
+        '#description'   => t('If a value is entered without a comma, it will be interpreted as a hexadecimal RGB color. Normal RGB can be used by separating the components by a comma. e.g 255,255,255 for white. A CMYK color can be entered in the same way as RGB. e.g. 0,100,0,0 for magenta.'),
+        '#size'          => 20,
+        '#default_value' => !isset($this->options['formats'][$field]['text']['color']) ? $this->display->handler->get_option('default_text_color') : $this->options['formats'][$field]['text']['color'],
+      );
+      $form['formats'][$field]['render']              = array(
+        '#type'        => 'fieldset',
+        '#title'       => t('Render Settings'),
+        '#collapsed'   => FALSE,
+        '#collapsible' => TRUE,
+      );
+      $form['formats'][$field]['render']['is_html']   = array(
+        '#type'          => 'checkbox',
+        '#title'         => t('Render As HTML'),
+        '#default_value' => isset($this->options['formats'][$field]['render']['is_html']) ? $this->options['formats'][$field]['render']['is_html'] : 1,
+      );
 
-    $form['caption'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Short description of table'),
-      '#description' => t('Include a caption for better accessibility of your table.'),
-      '#default_value' => $this->options['caption'],
-    );
-
-    $form['summary'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Table summary'),
-      '#description' => t('This value will be displayed as table-summary attribute in the html. Use this to give a summary of complex tables.'),
-      '#default_value' => $this->options['summary'],
-    );
+      $form['formats'][$field]['render']['minimal_space'] = array(
+        '#type'          => 'textfield',
+        '#title'         => t('Minimal Space'),
+        '#description'   => t('Specify here the minimal space, which is needed on the page, that the content is placed on the page.'),
+        '#default_value' => isset($this->options['formats'][$field]['render']['minimal_space']) ? $this->options['formats'][$field]['render']['minimal_space'] : 1,
+      );
+    
+    
   }
 
 
