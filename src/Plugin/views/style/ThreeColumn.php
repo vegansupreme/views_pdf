@@ -40,7 +40,20 @@ class ThreeColumn extends views_plugin_style {
     
      $options = $this->display->handler->get_field_labels();
     $fields  = $this->display->handler->get_option('fields');
-
+    
+    foreach ($options as $field => $option) {
+    
+          if (isset($fields[$field]['exclude']) && $fields[$field]['exclude'] == 1) {
+        continue;
+      }
+     
+     $form['formats'][$field] = array(
+        '#type'        => 'fieldset',
+        '#title'       => check_plain($option),
+        '#collapsed'   => TRUE,
+        '#collapsible' => TRUE,
+      );
+    
     $fonts = array_merge(
       array(
         'default' => t('-- Default --')
@@ -69,6 +82,13 @@ class ThreeColumn extends views_plugin_style {
     $hyphenate = array_merge(
       $hyphenate,
       \Drupal\views_pdf\ViewsPdfBase::getAvailableHyphenatePatterns()
+    );
+    
+    $relative_elements = array(
+      'page'          => t('Page'),
+      'header_footer' => t('In header / footer'),
+      'last_position' => t('Last Writing Position'),
+      'self'          => t('Field: Self'),
     );
     
     $form['columns'] = array(
@@ -127,6 +147,52 @@ class ThreeColumn extends views_plugin_style {
         '#size'          => 20,
         '#default_value' => !isset($this->options['formats'][$field]['text']['color']) ? $this->display->handler->get_option('default_text_color') : $this->options['formats'][$field]['text']['color'],
       );
+      
+        $form['formats'][$field]['position'] = array(
+        '#type'        => 'fieldset',
+        '#title'       => t('Position Settings'),
+        '#collapsed'   => FALSE,
+        '#collapsible' => TRUE,
+      );
+
+      $form['formats'][$field]['position']['object'] = array(
+        '#type'          => 'select',
+        '#title'         => t('Position relative to'),
+        '#required'      => FALSE,
+        '#options'       => $relative_elements,
+        '#default_value' => !empty($this->options['formats'][$field]['position']['object']) ? $this->options['formats'][$field]['position']['object'] : 'last_position',
+      );
+
+      $form['formats'][$field]['position']['corner'] = array(
+        '#type'          => 'radios',
+        '#title'         => t('Position relative to corner'),
+        '#required'      => FALSE,
+        '#options'       => array(
+          'top_left'     => t('Top Left'),
+          'top_right'    => t('Top Right'),
+          'bottom_left'  => t('Bottom Left'),
+          'bottom_right' => t('Bottom Right'),
+        ),
+        '#default_value' => !empty($this->options['formats'][$field]['position']['corner']) ? $this->options['formats'][$field]['position']['corner'] : 'top_left',
+      );
+
+      $relative_elements['field_' . $field] = t('Field: !field', array('!field' => $option));
+      
+      $form['formats'][$field]['position']['x'] = array(
+        '#type'          => 'textfield',
+        '#title'         => t('Position X'),
+        '#required'      => FALSE,
+        '#default_value' => !empty($this->options['formats'][$field]['position']['x']) ? $this->options['formats'][$field]['position']['x'] : '',
+      );
+
+      $form['formats'][$field]['position']['y'] = array(
+        '#type'          => 'textfield',
+        '#title'         => t('Position Y'),
+        '#required'      => FALSE,
+        '#default_value' => !empty($this->options['formats'][$field]['position']['y']) ? $this->options['formats'][$field]['position']['y'] : '',
+      );
+      
+      
       $form['formats'][$field]['render']              = array(
         '#type'        => 'fieldset',
         '#title'       => t('Render Settings'),
@@ -145,8 +211,9 @@ class ThreeColumn extends views_plugin_style {
         '#description'   => t('Specify here the minimal space, which is needed on the page, that the content is placed on the page.'),
         '#default_value' => isset($this->options['formats'][$field]['render']['minimal_space']) ? $this->options['formats'][$field]['render']['minimal_space'] : 1,
       );
-    
-    
+    //$this->options['formats'][$field]['position']['x'] = '2';
+    //$this->options['formats'][$field]['position']['y'] = '2';
+    }
   }
 
 
@@ -165,6 +232,8 @@ class ThreeColumn extends views_plugin_style {
    * @return string
    *   Rendered output of given grouping sets.
    */
+   
+/*
   function render_grouping_sets($sets, $level = 0) {
 
     $output = '';
@@ -179,7 +248,7 @@ class ThreeColumn extends views_plugin_style {
         if (isset($this->row_plugin->options['formats'][$field_id])) {
           $options = $this->row_plugin->options['formats'][$field_id];
         }
-        $this->view->pdf->drawGridContent($set['group'], $options, $this->view);
+        $this->view->pdf->drawContent($set['group'], $options, $this->view);
         $this->render_grouping_sets($set['rows'], $next_level);
       }
       // Render as a record set.
@@ -206,6 +275,21 @@ class ThreeColumn extends views_plugin_style {
 
     return $output;
   }
+*/
+
+ /**
+   * Render the style
+   */
+
+  function render() {
+    $output = '';
+
+    $this->view->numberOfRecords = count($this->view->result);
+    $this->view->pdf->drawTable($this->view, $this->options);
+
+    return $output;
+  }
+
 
   /**
    * Attach this view to another display as a feed.
