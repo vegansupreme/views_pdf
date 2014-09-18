@@ -31,35 +31,29 @@ class ThreeColumn extends views_plugin_style {
     return $options;
   }
 
+  /**
+   * Render the style.
+   */
+  function render() {
+    $output = '';
+
+    $this->view->numberOfRecords = count($this->view->result);
+    $this->view->pdf->drawTable($this->view, $this->options);
+
+    return $output;
+  }
+
+
 
  /**
    * Render the given style.
    */
   function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
+    //parent::options_form($form, $form_state);
     
      $options = $this->display->handler->get_field_labels();
     $fields  = $this->display->handler->get_option('fields');
     
-    foreach ($options as $field => $option) {
-    
-          if (isset($fields[$field]['exclude']) && $fields[$field]['exclude'] == 1) {
-        continue;
-      }
-     
-     $form['formats'][$field] = array(
-        '#type'        => 'fieldset',
-        '#title'       => check_plain($option),
-        '#collapsed'   => TRUE,
-        '#collapsible' => TRUE,
-      );
-    
-    $fonts = array_merge(
-      array(
-        'default' => t('-- Default --')
-      ),
-      \Drupal\views_pdf\ViewsPdfBase::getAvailableFontsCleanList());
-
     $font_styles = array(
       'b' => t('Bold'),
       'i' => t('Italic'),
@@ -68,6 +62,11 @@ class ThreeColumn extends views_plugin_style {
       'o' => t('Overline'),
     );
     
+    $fonts = array_merge(
+      array(
+        'default' => t('-- Default --')
+      ),
+      \Drupal\views_pdf\ViewsPdfBase::getAvailableFontsCleanList());
     $align = array(
       'L' => t('Left'),
       'C' => t('Center'),
@@ -90,6 +89,25 @@ class ThreeColumn extends views_plugin_style {
       'last_position' => t('Last Writing Position'),
       'self'          => t('Field: Self'),
     );
+    
+    
+    foreach ($options as $field => $option) {
+    
+          if (isset($fields[$field]['exclude']) && $fields[$field]['exclude'] == 1) {
+        continue;
+      }
+     
+     $form['formats'][$field] = array(
+        '#type'        => 'fieldset',
+        '#title'       => check_plain($option),
+        '#collapsed'   => TRUE,
+        '#collapsible' => TRUE,
+      );
+    
+
+    
+    
+
     
     $form['columns'] = array(
       '#type' => 'textfield',
@@ -277,6 +295,30 @@ class ThreeColumn extends views_plugin_style {
   }
 */
 
+
+ /**
+   * Stores the options.
+   */
+  function options_submit(&$form, &$form_state) {
+    $default = $this->display->handler->get_option('default_font_style');
+    foreach ($form_state['values']['row_options']['formats'] as $id => $field) {
+
+      // Reset to default, if the elements are equal to the default settings.
+      if (count(array_diff($default, $field['text']['font_style'])) == 0 && count(array_diff($field['text']['font_style'], $default)) == 0) {
+        $form_state['values']['row_options']['formats'][$id]['text']['font_style'] = NULL;
+      }
+
+      if ($field['text']['align'] == $this->display->handler->get_option('default_text_align')) {
+        $form_state['values']['row_options']['formats'][$id]['text']['align'] = NULL;
+      }
+
+      if ($field['text']['hyphenate'] == $this->display->handler->get_option('default_text_hyphenate')) {
+        $form_state['values']['row_options']['formats'][$id]['text']['hyphenate'] = NULL;
+      }
+    }
+
+
+
  /**
    * Render the style
    */
@@ -285,7 +327,7 @@ class ThreeColumn extends views_plugin_style {
     $output = '';
 
     $this->view->numberOfRecords = count($this->view->result);
-    $this->view->pdf->drawTable($this->view, $this->options);
+    $this->view->pdf->drawGrid($this->view, $this->options);
 
     return $output;
   }
