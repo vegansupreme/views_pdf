@@ -41,8 +41,9 @@ class Fields extends views_plugin_row {
         $options = array();
       }
       
-      $this->calculate_columns($options);
-      $this->view->pdf->drawContent($row, $options, $this->view, $id);
+      //new function for the grid layout
+     // $this->calculate_columns($options);
+      $this->view->pdf->drawContent($row, $this->calculate_columns($options), $this->view, $id);
  //     watchdog('Views PDF', $options['position']['x']);
   //     watchdog('Views PDF', $this->options['columns']);
 
@@ -73,6 +74,13 @@ class Fields extends views_plugin_row {
    $pageDim = $this->view->pdf->getPageDimensions();
     //   watchdog('Views PDF', 'height= '. $options['position']['height']);
     //   watchdog('Views PDF', 'page width= '. $pageDim['wk']);
+    
+    //watchdog('Views PDF', (($this->view->row_index) % $column_count));
+    
+    $options['position']['x'] = (($pageDim['wk'] / $column_count) * (($this->view->row_index+1) % $column_count)) +0;
+    
+    //$options['position']['x'] = 7;
+    /*
    switch (($this->view->row_index+1) % $column_count) {
    //last column
     case 0:
@@ -82,15 +90,20 @@ class Fields extends views_plugin_row {
     case 2:
         break;
     case 3:
+    
+    
    //$this->view->row_index+1;
    //watchdog('Views PDF', $column_count . " columns");
-   //watchdog('Views PDF', (($this->view->row_index+1) % $column_count));
+   //watchdog('Views PDF', (($this->view->row_index) % $column_count));
    
    
         break;
     case 4:
         break;
     }
+    */
+    
+    return $options;
   }
   
   /**
