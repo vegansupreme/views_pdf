@@ -40,8 +40,11 @@ class Fields extends views_plugin_row {
       else {
         $options = array();
       }
-
+      
+      $this->calculate_columns($options);
       $this->view->pdf->drawContent($row, $options, $this->view, $id);
+ //     watchdog('Views PDF', $options['position']['x']);
+  //     watchdog('Views PDF', $this->options['columns']);
 
       // Set or update header / footer options per row
       // this ensures that we write the last record for each page
@@ -57,7 +60,39 @@ class Fields extends views_plugin_row {
     $this->view->pdf->resetRowPageNumber();
 
   }
-
+  
+  /**
+   * Column calculations.
+   */
+  function calculate_columns($options) {
+   //watchdog('Views PDF', $options['position']['x']);
+   //watchdog('Views PDF', $this->options['columns']);
+   
+   //watchdog('Views PDF', $this->view->row_index);
+   $column_count = ((int)($this->options['columns']));
+   $pageDim = $this->view->pdf->getPageDimensions();
+    //   watchdog('Views PDF', 'height= '. $options['position']['height']);
+    //   watchdog('Views PDF', 'page width= '. $pageDim['wk']);
+   switch (($this->view->row_index+1) % $column_count) {
+   //last column
+    case 0:
+        break;
+    case 1:
+        break;
+    case 2:
+        break;
+    case 3:
+   //$this->view->row_index+1;
+   //watchdog('Views PDF', $column_count . " columns");
+   //watchdog('Views PDF', (($this->view->row_index+1) % $column_count));
+   
+   
+        break;
+    case 4:
+        break;
+    }
+  }
+  
   /**
    * Option definitions.
    */
@@ -68,6 +103,7 @@ class Fields extends views_plugin_row {
     $options['leading_template'] = array('default' => '');
     $options['template']         = array('default' => '');
     $options['succeed_template'] = array('default' => '');
+    $options['columns'] = array('default' => '3');
 
     return $options;
   }
@@ -100,6 +136,14 @@ class Fields extends views_plugin_row {
       \Drupal\views_pdf\ViewsPdfBase::getAvailableTemplates());
 
     $file_fields = array();
+
+    $form['columns'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Number of columns'),
+      '#default_value' => $this->options['columns'],
+      '#required' => TRUE,
+      '#element_validate' => array('views_element_validate_integer'),
+    );
 
     foreach ($this->display->handler->get_handlers('field') as $id => $handler) {
       $info = field_read_field($id);
@@ -284,29 +328,29 @@ class Fields extends views_plugin_row {
         '#default_value' => isset($this->options['formats'][$field]['render']['minimal_space']) ? $this->options['formats'][$field]['render']['minimal_space'] : 1,
       );
 
-      $form['formats'][$field]['render']['eval_before']        = array(
-        '#type'          => 'textarea',
-        '#title'         => t('PHP Code Before Output'),
-        '#default_value' => isset($this->options['formats'][$field]['render']['eval_before']) ? $this->options['formats'][$field]['render']['eval_before'] : '',
-      );
-      $form['formats'][$field]['render']['bypass_eval_before'] = array(
-        '#type'          => 'checkbox',
-        '#title'         => t('Use the PHP eval function instead php_eval.'),
-        '#description'   => t("WARNING: If you don't know the risk of using eval leave as it."),
-        '#default_value' => !empty($this->options['formats'][$field]['render']['bypass_eval_before']) ? $this->options['formats'][$field]['render']['bypass_eval_before'] : FALSE,
-      );
-
-      $form['formats'][$field]['render']['eval_after']        = array(
-        '#type'          => 'textarea',
-        '#title'         => t('PHP Code After Output'),
-        '#default_value' => isset($this->options['formats'][$field]['render']['eval_after']) ? $this->options['formats'][$field]['render']['eval_after'] : '',
-      );
-      $form['formats'][$field]['render']['bypass_eval_after'] = array(
-        '#type'          => 'checkbox',
-        '#title'         => t('Use the PHP eval function instead php_eval.'),
-        '#description'   => t("WARNING: If you don't know the risk of using eval leave as it."),
-        '#default_value' => !empty($this->options['formats'][$field]['render']['bypass_eval_after']) ? $this->options['formats'][$field]['render']['bypass_eval_after'] : FALSE,
-      );
+ //      $form['formats'][$field]['render']['eval_before']        = array(
+//         '#type'          => 'textarea',
+//         '#title'         => t('PHP Code Before Output'),
+//         '#default_value' => isset($this->options['formats'][$field]['render']['eval_before']) ? $this->options['formats'][$field]['render']['eval_before'] : '',
+//       );
+//       $form['formats'][$field]['render']['bypass_eval_before'] = array(
+//         '#type'          => 'checkbox',
+//         '#title'         => t('Use the PHP eval function instead php_eval.'),
+//         '#description'   => t("WARNING: If you don't know the risk of using eval leave as it."),
+//         '#default_value' => !empty($this->options['formats'][$field]['render']['bypass_eval_before']) ? $this->options['formats'][$field]['render']['bypass_eval_before'] : FALSE,
+//       );
+// 
+//       $form['formats'][$field]['render']['eval_after']        = array(
+//         '#type'          => 'textarea',
+//         '#title'         => t('PHP Code After Output'),
+//         '#default_value' => isset($this->options['formats'][$field]['render']['eval_after']) ? $this->options['formats'][$field]['render']['eval_after'] : '',
+//       );
+//       $form['formats'][$field]['render']['bypass_eval_after'] = array(
+//         '#type'          => 'checkbox',
+//         '#title'         => t('Use the PHP eval function instead php_eval.'),
+//         '#description'   => t("WARNING: If you don't know the risk of using eval leave as it."),
+//         '#default_value' => !empty($this->options['formats'][$field]['render']['bypass_eval_after']) ? $this->options['formats'][$field]['render']['bypass_eval_after'] : FALSE,
+//       );
 
     }
 

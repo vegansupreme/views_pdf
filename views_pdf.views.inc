@@ -97,7 +97,7 @@ function views_pdf_views_plugins() {
       'pdf_gridfields' => array(
         'title'        => t('PDF Grid Fields'),
         'help'         => t('Displays the fields with an grid.'),
-        'handler'      => 'GridFields',
+        'handler'      => 'Fields',
         'uses fields'  => TRUE,
         'uses options' => TRUE,
         'type'         => 'pdf',
