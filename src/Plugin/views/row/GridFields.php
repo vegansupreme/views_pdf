@@ -77,7 +77,8 @@ class Fields extends views_plugin_row {
     
     //watchdog('Views PDF', (($this->view->row_index) % $column_count));
     
-    $options['position']['x'] = (($pageDim['wk'] / $column_count) * (($this->view->row_index+1) % $column_count)) +0;
+    $options['position']['x'] = (($pageDim['wk'] / $column_count) * (($this->view->row_index) % $column_count)) +0;
+    $options['position']['y'] = (floor($this->view->row_index/$column_count))*$options['position']['height'];
     
     //$options['position']['x'] = 7;
     /*
