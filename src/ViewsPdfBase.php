@@ -665,6 +665,7 @@ class ViewsPdfBase extends FPDI {
    }
    
    $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * (($this->record - 1) % $columns)) +$this->rMargin;
+   $options['position']['width'] = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
    $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
    $total_rows = (int)($hspace/$options['position']['height']);
    $y_page_position = (floor(($this->record -1)/$columns)) % $total_rows;
