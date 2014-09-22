@@ -43,7 +43,8 @@ class Fields extends views_plugin_row {
       
       //new function for the grid layout
      // $this->calculate_columns($options);
-      $this->view->pdf->drawContent($row, $this->calculate_columns($options), $this->view, $id);
+      //$this->view->pdf->drawContent($row, $this->calculate_columns($options), $this->view, $id);
+      $this->view->pdf->drawGridContent($this->options['columns'], $row, $options, $this->view, $id);
  //     watchdog('Views PDF', $options['position']['x']);
   //     watchdog('Views PDF', $this->options['columns']);
 
@@ -74,12 +75,18 @@ class Fields extends views_plugin_row {
    $pageDim = $this->view->pdf->getPageDimensions();
     //   watchdog('Views PDF', 'height= '. $options['position']['height']);
     //   watchdog('Views PDF', 'page width= '. $pageDim['wk']);
-    
+    $page_rows = (int)($pageDim['hk'] / $options['position']['height']);
+    //watchdog('Views PDF', 'page rows: '. $page_rows);
+    watchdog('Views PDF', 'bottom margin: '. $this->pdf->view->bMargin);
     //watchdog('Views PDF', (($this->view->row_index) % $column_count));
     
     $options['position']['x'] = (($pageDim['wk'] / $column_count) * (($this->view->row_index) % $column_count)) +0;
-    $options['position']['y'] = (floor($this->view->row_index/$column_count))*$options['position']['height'];
+    $my_y = (floor($this->view->row_index/$column_count)) *$options['position']['height'];
+    $options['position']['y'] = (fmod($my_y , ($pageDim['hk']-1)));
+    //$options['position']['y'] = ($my_y % ($pageDim['hk']-1)) *$options['position']['height'];
+    watchdog('Views PDF', $options['position']['y']);
     
+    //watchdog('Views PDF', 'page height='.$pageDim['hk']); // 11
     //$options['position']['x'] = 7;
     /*
    switch (($this->view->row_index+1) % $column_count) {
@@ -126,7 +133,7 @@ class Fields extends views_plugin_row {
    * Provide a form for setting options.
    */
   function options_form(&$form, &$form_state) {
-
+    parent::options_form($form, $form_state);
     $options = $this->display->handler->get_field_labels();
     $fields  = $this->display->handler->get_option('fields');
 

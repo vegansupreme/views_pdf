@@ -471,6 +471,224 @@ class ViewsPdfBase extends FPDI {
       $this->renderRow($x, $y, $row, $options, $view, $key, $printLabels);
     }
   }
+  
+  public function drawGridContent($columns, $row, $options, &$view = NULL, $key = NULL, $printLabels = TRUE) {
+	//watchdog('Views PDF', 'draw grid contnent');
+    if (!is_array($options)) {
+      $options = array();
+    }
+
+    // Set defaults:
+    $options += array(
+      'columns' => array(),
+      'position' => array(),
+      'text'     => array(),
+      'render'   => array(),
+    );
+
+    $options['position'] += array(
+      'corner' => 'top_left',
+      'x'      => 0,
+      'y'      => 0,
+      'object' => 'last_position',
+      'width'  => 0,
+      'height' => 0,
+    );
+    
+//      $options['columns'] += array(
+//       '#default_value' => '3',
+//     );
+
+    $options['text'] += array(
+      'font_family' => 'default',
+      'font_style'  => '',
+    );
+
+    $options['render'] += array(
+      'eval_before'        => '',
+      'eval_after'         => '',
+      'bypass_eval_before' => FALSE,
+      'bypass_eval_after'  => FALSE,
+    );
+
+    $x = $y = 0;
+
+
+    // Get the page dimensions
+    $pageDim = $this->getPageDimensions();
+
+    // Check if there is a minimum space defined. If so, then ensure
+    // that we have enough space left on this page. If not force adding
+    // a new one.
+    if (isset($options['render']['minimal_space'])) {
+      $enoughtSpace = ($this->y + $this->bMargin + $options['render']['minimal_space']) < $pageDim['hk'];
+    }
+    else {
+      $enoughtSpace = TRUE;
+    }
+
+
+    // Check if there is a page, if not add it:
+    if (!$enoughtSpace OR $this->getPage() == 0 OR $this->addNewPageBeforeNextContent == TRUE) {
+      $this->addNewPageBeforeNextContent = FALSE;
+      $this->addPage();
+    }
+
+    // Get the page dimenstions again, because it can be that a new
+    // page was added with new dimensions.
+    $pageDim = $this->getPageDimensions();
+
+    // Determine the last writting y coordinate, if we are on a new
+    // page we need to reset it back to the top margin.
+    if ($this->lastWritingPage != $this->getPage() OR ($this->y + $this->bMargin) > $pageDim['hk']) {
+      $last_writing_y_position = $this->tMargin;
+    }
+    else {
+      $last_writing_y_position = $this->y;
+    }
+
+    // Determin the x and y coordinates
+    if ($options['position']['object'] == 'last_position') {
+      $x = $this->x + $options['position']['x'];
+      $y = $this->y + $options['position']['y'];
+    }
+    elseif ($options['position']['object'] == 'page') {
+      switch ($options['position']['corner']) {
+        default:
+        case 'top_left':
+          $x = $options['position']['x'] + $this->lMargin;
+          $y = $options['position']['y'] + $this->tMargin;
+          break;
+
+        case 'top_right':
+          $x = $options['position']['x'] + $pageDim['wk'] - $this->rMargin;
+          $y = $options['position']['y'] + $this->tMargin;
+          break;
+
+        case 'bottom_left':
+          $x = $options['position']['x'] + $this->rMargin;
+          $y = $options['position']['y'] + $pageDim['hk'] - $this->bMargin;
+
+          break;
+
+        case 'bottom_right':
+          $x = $options['position']['x'] + $pageDim['wk'] - $this->rMargin;
+          $y = $options['position']['y'] + $pageDim['hk'] - $this->bMargin;
+
+          break;
+      }
+    }
+    elseif (
+      $options['position']['object'] == 'self' or
+      //$options['position']['object'] == 'last' or
+      preg_match('/field\_(.*)/', $options['position']['object'], $rs)
+    ) {
+      if ($options['position']['object'] == 'last') {
+        $relative_to_element = $this->lastWritingElement;
+      }
+      elseif ($options['position']['object'] == 'self') {
+        $relative_to_element = $key;
+      }
+      else {
+        $relative_to_element = $rs[1];
+      }
+
+      if (isset($this->elements[$relative_to_element])) {
+
+        switch ($options['position']['corner']) {
+          default:
+          case 'top_left':
+            $x = $options['position']['x'] + $this->elements[$relative_to_element]['x'];
+            $y = $options['position']['y'] + $this->elements[$relative_to_element]['y'];
+            break;
+
+          case 'top_right':
+            $x = $options['position']['x'] + $this->elements[$relative_to_element]['x'] + $this->elements[$relative_to_element]['width'];
+            $y = $options['position']['y'] + $this->elements[$relative_to_element]['y'];
+            break;
+
+          case 'bottom_left':
+            $x = $options['position']['x'] + $this->elements[$relative_to_element]['x'];
+            $y = $options['position']['y'] + $this->elements[$relative_to_element]['y'] + $this->elements[$relative_to_element]['height'];
+
+            break;
+
+          case 'bottom_right':
+            $x = $options['position']['x'] + $this->elements[$relative_to_element]['x'] + $this->elements[$relative_to_element]['width'];
+            $y = $options['position']['y'] + $this->elements[$relative_to_element]['y'] + $this->elements[$relative_to_element]['height'];
+
+            break;
+        }
+
+        // Handle if the relative element is on another page. So using the
+        // the last writing position instead for y.
+        if ($this->getPage() != $this->elements[$relative_to_element]['page'] && $options['position']['object'] != 'self') {
+          $this->setPage($this->elements[$relative_to_element]['page']);
+        }
+        elseif ($this->getPage() != $this->elements[$relative_to_element]['page'] && $options['position']['object'] == 'self') {
+          $y = $y - $this->elements[$relative_to_element]['y'] + $last_writing_y_position;
+          $this->SetPage($this->lastWritingPage);
+        }
+
+      }
+      else {
+        $x = $this->x;
+        $y = $last_writing_y_position;
+      }
+
+    }
+    else {
+      // No position match (for example header/footer)
+      // Render or return
+      if (is_object($view) && $key != NULL) {
+        $content = $view->field[$key]->theme($row);
+      }
+      else {
+        return;
+      }
+
+    }
+
+/*
+ * Column calculations.
+ */
+  
+  // I was using $this->view->row_index, but that is not set inititally. 
+  // While it worked fine, it was throwing a warning. 
+  //So instead I use the custom variable 'record'.
+   ++$this->record;
+//   watchdog('Views PDF', $this->record);
+   
+   if (isset($this->last_item_trigger) && $this->last_item_trigger === TRUE) {
+     $this->addPage();
+     $this->last_item_trigger = FALSE;
+   }
+   
+   $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * (($this->record - 1) % $columns)) +$this->rMargin;
+   $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
+   $total_rows = (int)($hspace/$options['position']['height']);
+   $y_page_position = (floor(($this->record -1)/$columns)) % $total_rows;
+   
+   if ($y_page_position == ($total_rows -1)) {
+     $this->last_row_position++;
+     if ($this->last_row_position == $columns) {
+     $this->last_item_trigger = TRUE;
+     $this->last_row_position = 0;
+     }
+   }
+   
+   $y = $y_page_position * $options['position']['height'] + $this->tMargin;
+   
+   /*
+    * End column calculations.
+    */
+
+    if ($key !== NULL && $view->field[$key]->theme($row) || !empty($row)) {
+      $this->SetX($x);
+      $this->SetY($y);
+      $this->renderRow($x, $y, $row, $options, $view, $key, $printLabels);
+    }
+  }
 
   protected function renderRow($x, $y, $row, $options, &$view = NULL, $key = NULL, $printLabels = TRUE) {
 
