@@ -329,7 +329,6 @@ class ViewsPdfBase extends FPDI {
 
     $x = $y = 0;
 
-
     // Get the page dimensions
     $pageDim = $this->getPageDimensions();
 
@@ -529,15 +528,16 @@ class ViewsPdfBase extends FPDI {
 
 
     // Check if there is a page, if not add it:
-    if (!$enoughtSpace OR $this->getPage() == 0 OR $this->addNewPageBeforeNextContent == TRUE) {
+    if ($this->getPage() == 0 OR $this->addNewPageBeforeNextContent == TRUE) {
       $this->addNewPageBeforeNextContent = FALSE;
       $this->addPage();
     }
 
+
     // Get the page dimenstions again, because it can be that a new
     // page was added with new dimensions.
     $pageDim = $this->getPageDimensions();
-
+/*
     // Determine the last writting y coordinate, if we are on a new
     // page we need to reset it back to the top margin.
     if ($this->lastWritingPage != $this->getPage() OR ($this->y + $this->bMargin) > $pageDim['hk']) {
@@ -546,6 +546,7 @@ class ViewsPdfBase extends FPDI {
     else {
       $last_writing_y_position = $this->y;
     }
+*/
 
     // Determin the x and y coordinates
     if ($options['position']['object'] == 'last_position') {
@@ -657,13 +658,7 @@ class ViewsPdfBase extends FPDI {
   // While it worked fine, it was throwing a warning. 
   //So instead I use the custom variable 'record'.
    ++$this->record;
-//   watchdog('Views PDF', $this->record);
-   
-   if (isset($this->last_item_trigger) && $this->last_item_trigger === TRUE) {
-     $this->addPage();
-     $this->last_item_trigger = FALSE;
-   }
-   
+
    $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * (($this->record - 1) % $columns)) +$this->rMargin;
    $options['position']['width'] = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
    $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
@@ -674,6 +669,7 @@ class ViewsPdfBase extends FPDI {
      $this->last_row_position++;
      if ($this->last_row_position == $columns) {
      $this->last_item_trigger = TRUE;
+     $this->addNewPageBeforeNextContent = TRUE;
      $this->last_row_position = 0;
      }
    }
