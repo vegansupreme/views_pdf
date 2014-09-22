@@ -42,11 +42,7 @@ class Fields extends views_plugin_row {
       }
       
       //new function for the grid layout
-     // $this->calculate_columns($options);
-      //$this->view->pdf->drawContent($row, $this->calculate_columns($options), $this->view, $id);
       $this->view->pdf->drawGridContent($this->options['columns'], $row, $options, $this->view, $id);
- //     watchdog('Views PDF', $options['position']['x']);
-  //     watchdog('Views PDF', $this->options['columns']);
 
       // Set or update header / footer options per row
       // this ensures that we write the last record for each page
@@ -63,56 +59,6 @@ class Fields extends views_plugin_row {
 
   }
   
-  /**
-   * Column calculations.
-   */
-  function calculate_columns($options) {
-   //watchdog('Views PDF', $options['position']['x']);
-   //watchdog('Views PDF', $this->options['columns']);
-   
-   //watchdog('Views PDF', $this->view->row_index);
-   $column_count = ((int)($this->options['columns']));
-   $pageDim = $this->view->pdf->getPageDimensions();
-    //   watchdog('Views PDF', 'height= '. $options['position']['height']);
-    //   watchdog('Views PDF', 'page width= '. $pageDim['wk']);
-    $page_rows = (int)($pageDim['hk'] / $options['position']['height']);
-    //watchdog('Views PDF', 'page rows: '. $page_rows);
-    watchdog('Views PDF', 'bottom margin: '. $this->pdf->view->bMargin);
-    //watchdog('Views PDF', (($this->view->row_index) % $column_count));
-    
-    $options['position']['x'] = (($pageDim['wk'] / $column_count) * (($this->view->row_index) % $column_count)) +0;
-    $my_y = (floor($this->view->row_index/$column_count)) *$options['position']['height'];
-    $options['position']['y'] = (fmod($my_y , ($pageDim['hk']-1)));
-    //$options['position']['y'] = ($my_y % ($pageDim['hk']-1)) *$options['position']['height'];
-    watchdog('Views PDF', $options['position']['y']);
-    
-    //watchdog('Views PDF', 'page height='.$pageDim['hk']); // 11
-    //$options['position']['x'] = 7;
-    /*
-   switch (($this->view->row_index+1) % $column_count) {
-   //last column
-    case 0:
-        break;
-    case 1:
-        break;
-    case 2:
-        break;
-    case 3:
-    
-    
-   //$this->view->row_index+1;
-   //watchdog('Views PDF', $column_count . " columns");
-   //watchdog('Views PDF', (($this->view->row_index) % $column_count));
-   
-   
-        break;
-    case 4:
-        break;
-    }
-    */
-    
-    return $options;
-  }
   
   /**
    * Option definitions.
