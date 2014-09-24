@@ -654,16 +654,13 @@ class ViewsPdfBase extends FPDI {
  * Column calculations.
  */
   
-  // I was using $this->view->row_index, but that is not set inititally. 
-  // While it worked fine, it was throwing a warning. 
-  //So instead I use the custom variable 'record'.
-   ++$this->record;
+   //$this->record = isset($this->row_index) ? $this->row_index : 0;
 
-   $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * (($this->record - 1) % $columns)) +$this->rMargin;
+   $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * ($view->row_index % $columns)) +$this->rMargin;
    $options['position']['width'] = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
    $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
    $total_rows = (int)($hspace/$options['position']['height']);
-   $y_page_position = (floor(($this->record -1)/$columns)) % $total_rows;
+   $y_page_position = (floor($view->row_index/$columns)) % $total_rows;
    
    if ($y_page_position == ($total_rows -1)) {
      $this->last_row_position++;
