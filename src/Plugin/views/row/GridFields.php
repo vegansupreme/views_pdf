@@ -359,14 +359,12 @@ class Fields extends views_plugin_row {
         '#title'         => t('Render As HTML'),
         '#default_value' => isset($this->options['formats'][$field]['render']['is_html']) ? $this->options['formats'][$field]['render']['is_html'] : 1,
       );
-
       $form['formats'][$field]['render']['image_resolution'] = array(
         '#type'          => 'textfield',
         '#title'         => t('Image Resolution'),
         '#description'   => t('Specify image resolution in pixels per inch.'),
         '#default_value' => isset($this->options['formats'][$field]['render']['image_resolution']) ? $this->options['formats'][$field]['render']['image_resolution'] : 72,
       );
-
       $form['formats'][$field]['render']['minimal_space'] = array(
         '#type'          => 'textfield',
         '#title'         => t('Minimal Space'),

@@ -671,6 +671,7 @@ class ViewsPdfBase extends FPDI {
      $y_page_position = (floor($view->row_index/$columns)) % $total_rows;
 
      if ($y_page_position == ($total_rows -1)) {
+
      $this->last_row_position++;
      if ($this->last_row_position == $columns) {
      $this->addNewPageBeforeNextContent = TRUE;
