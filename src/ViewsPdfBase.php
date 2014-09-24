@@ -321,6 +321,7 @@ class ViewsPdfBase extends FPDI {
     );
 
     $options['render'] += array(
+      'minimal_space'        => '',
       'eval_before'        => '',
       'eval_after'         => '',
       'bypass_eval_before' => FALSE,
@@ -506,6 +507,8 @@ class ViewsPdfBase extends FPDI {
     $options['render'] += array(
       'eval_before'        => '',
       'eval_after'         => '',
+      'minimal_space'         => '',
+      'image_resolution'         => '',
       'bypass_eval_before' => FALSE,
       'bypass_eval_after'  => FALSE,
     );
@@ -653,7 +656,7 @@ class ViewsPdfBase extends FPDI {
 /*
  * Column calculations.
  */
-  
+  watchdog('Views PDF' , $options['render']['minimal_space']);
    $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * ($view->row_index % $columns)) +$this->rMargin;
    
    //this is max column width.
