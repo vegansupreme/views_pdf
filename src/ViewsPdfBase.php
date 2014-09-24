@@ -654,10 +654,14 @@ class ViewsPdfBase extends FPDI {
  * Column calculations.
  */
   
-   //$this->record = isset($this->row_index) ? $this->row_index : 0;
-
    $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * ($view->row_index % $columns)) +$this->rMargin;
-   $options['position']['width'] = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
+   
+   //this is max column width.
+   $col_width = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
+   
+   //Override the user-set width, if it's larger than the max column width. 
+   $options['position']['width'] = ($options['position']['width'] <= $col_width) ? $options['position']['width'] : $col_width;
+   
    $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
    $total_rows = (int)($hspace/$options['position']['height']);
    $y_page_position = (floor($view->row_index/$columns)) % $total_rows;
@@ -665,7 +669,6 @@ class ViewsPdfBase extends FPDI {
    if ($y_page_position == ($total_rows -1)) {
      $this->last_row_position++;
      if ($this->last_row_position == $columns) {
-     $this->last_item_trigger = TRUE;
      $this->addNewPageBeforeNextContent = TRUE;
      $this->last_row_position = 0;
      }
