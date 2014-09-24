@@ -680,7 +680,7 @@ class ViewsPdfBase extends FPDI {
       //watchdog('View PDF', $view->field[$key]->theme($row));
       $y = $y_page_position * $options['position']['height'] + $this->tMargin;
     }
-
+   
    /*
     * End column calculations.
     */
