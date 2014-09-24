@@ -473,7 +473,7 @@ class ViewsPdfBase extends FPDI {
   }
   
   public function drawGridContent($columns, $row, $options, &$view = NULL, $key = NULL, $printLabels = TRUE) {
-	//watchdog('Views PDF', 'draw grid contnent');
+
     if (!is_array($options)) {
       $options = array();
     }
@@ -495,8 +495,8 @@ class ViewsPdfBase extends FPDI {
       'height' => 0,
     );
     
-//      $options['columns'] += array(
-//       '#default_value' => '3',
+//      $options['columns'] += array( 
+//      'columns' => '',
 //     );
 
     $options['text'] += array(
@@ -507,8 +507,8 @@ class ViewsPdfBase extends FPDI {
     $options['render'] += array(
       'eval_before'        => '',
       'eval_after'         => '',
-      'minimal_space'         => '',
-      'image_resolution'         => '',
+      'minimal_space'      => '',
+      'image_resolution'   => '',
       'bypass_eval_before' => FALSE,
       'bypass_eval_after'  => FALSE,
     );
@@ -656,28 +656,30 @@ class ViewsPdfBase extends FPDI {
 /*
  * Column calculations.
  */
-  watchdog('Views PDF' , $options['render']['minimal_space']);
-   $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * ($view->row_index % $columns)) +$this->rMargin;
+ 
+    if($view->field[$key]->options['exclude'] != 1) {
+	   $x = ((($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns) * ($view->row_index % $columns)) +$this->rMargin;
    
-   //this is max column width.
-   $col_width = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
+	   //this is max column width.
+	   $col_width = (($pageDim['wk'] - ($this->rMargin + $this->lMargin)) / $columns);
    
-   //Override the user-set width, if it's larger than the max column width. 
-   $options['position']['width'] = ($options['position']['width'] <= $col_width) ? $options['position']['width'] : $col_width;
+	   //Override the user-set width, if it's larger than the max column width.
+	   $options['position']['width'] = ($options['position']['width'] <= $col_width) ? $options['position']['width'] : $col_width;
    
-   $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
-   $total_rows = (int)($hspace/$options['position']['height']);
-   $y_page_position = (floor($view->row_index/$columns)) % $total_rows;
+	   $hspace = (($pageDim['hk']) - (0 + $this->tMargin + $this->bMargin));
+	   $total_rows = (int)($hspace/$options['position']['height']);
+	   $y_page_position = (floor($view->row_index/$columns)) % $total_rows;
    
-   if ($y_page_position == ($total_rows -1)) {
-     $this->last_row_position++;
-     if ($this->last_row_position == $columns) {
-     $this->addNewPageBeforeNextContent = TRUE;
-     $this->last_row_position = 0;
-     }
+	   if ($y_page_position == ($total_rows -1)) {
+		 $this->last_row_position++;
+		 if ($this->last_row_position == $columns) {
+		 $this->addNewPageBeforeNextContent = TRUE;
+		 $this->last_row_position = 0;
+		 }
+	   }
+	   //watchdog('View PDF', $view->field[$key]->theme($row));
+	   $y = $y_page_position * $options['position']['height'] + $this->tMargin;
    }
-   
-   $y = $y_page_position * $options['position']['height'] + $this->tMargin;
    
    /*
     * End column calculations.
