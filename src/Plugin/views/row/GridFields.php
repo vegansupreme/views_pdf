@@ -297,8 +297,8 @@ class Fields extends views_plugin_row {
       $form['formats'][$field]['position']['height'] = array(
         '#type'          => 'textfield',
         '#title'         => t('Height'),
-        '#required'      => FALSE,
-        '#default_value' => !empty($this->options['formats'][$field]['position']['height']) ? $this->options['formats'][$field]['position']['height'] : '',
+        '#required'      => TRUE,
+        '#default_value' => !empty($this->options['formats'][$field]['position']['height']) ? $this->options['formats'][$field]['position']['height'] : '1',
       );
 
       $form['formats'][$field]['text'] = array(
