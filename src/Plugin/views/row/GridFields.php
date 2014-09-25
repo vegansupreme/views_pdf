@@ -42,7 +42,18 @@ class Fields extends views_plugin_row {
       }
       
       //new function for the grid layout
-      $this->view->pdf->drawGridContent($this->options['columns'], $row, $options, $this->view, $id);
+      
+ //      $tokens = $this->get_render_tokens('');
+//      $args = array();
+//      foreach ($this->options['columns'] as $arg) {
+//       $this->options['columns'] = str_replace(array_keys($tokens), $tokens, $this->options['columns']);
+      
+      if ($this->options['layout']['use_args'] == TRUE) {
+         $column_count = $this->view->args[(1 - $this->options['layout']['columns'])];
+      } else {
+         $column_count = $this->options['layout']['columns'];
+      }
+      $this->view->pdf->drawGridContent($column_count, $row, $options, $this->view, $id);
 
       // Set or update header / footer options per row
       // this ensures that we write the last record for each page
@@ -70,7 +81,7 @@ class Fields extends views_plugin_row {
     $options['leading_template'] = array('default' => '');
     $options['template']         = array('default' => '');
     $options['succeed_template'] = array('default' => '');
-    $options['columns'] = array('default' => '3');
+    $options['layout']           = array('default' => array());
 
     return $options;
   }
@@ -104,13 +115,75 @@ class Fields extends views_plugin_row {
 
     $file_fields = array();
 
-    $form['columns'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Number of columns'),
-      '#default_value' => $this->options['columns'],
-      '#required' => TRUE,
-      '#element_validate' => array('views_element_validate_integer'),
+/*
+ * Set Columns.
+ */
+
+   // Argument stuff. 
+//       $form['args'][$i] = array(
+//         '#type' => 'textfield',
+//         '#title' => t('Argument #%number', array('%number' => ($i+1))),
+//         '#default_value' => $this->options['args'][$i],
+//         '#description' => t('Enter here the argument to pass to the view. If you want to use a value from a field, then use the replacement patterns in <strong>Rewrite results</strong> below.'),
+//       );
+
+    // Get a list of the available fields and arguments for token replacement.
+    /*
+    $options = array();
+
+    $count = 0; // This lets us prepare the key as we want it printed.
+    foreach ($this->view->display_handler->get_handlers('argument') as $arg => $handler) {
+      $options[t('Arguments')]['!' . ++$count] = t('@argument input', array('@argument' => $handler->ui_name()));
+    }
+    */
+
+   // $this->document_self_tokens($options[t('Fields')]);
+/*
+    // Default text.
+    $output = t('<p>You must add some additional fields to this display before using this field. These fields may be marked as <em>Exclude from display</em> if you prefer. Note that due to rendering order, you cannot use fields that come after this field; if you need a field not listed here, rearrange your fields.</p>');
+    // We have some options, so make a list.
+    if (!empty($options)) {
+      $output = t('<p>The following substitution patterns are available for this display. Use the pattern shown on the left to display the value indicated on the right. Note that due to rendering order, you cannot use fields that come after this field; if you need a field not listed here, rearrange your fields.</p>');
+      foreach (array_keys($options) as $type) {
+        if (!empty($options[$type])) {
+          $items = array();
+          foreach ($options[$type] as $key => $value) {
+            $items[] = $key . ' == ' . $value;
+          }
+          $output .= theme('item_list', array('items' => $items, 'title' => $type));
+        }
+      }
+    }
+ */
+ 
+ /*   
+    $form['alter']['help'] = array(
+      '#type' => 'hidden',
+      '#id' => 'views-tokens-help',
+      '#prefix' => '<div><fieldset id="views-tokens-help"><legend>' . t('Replacement patterns') . '</legend>' . $output . '</fieldset></div>',
     );
+*/
+    $form['layout'] = array(
+      '#prefix' => '<div class="description form-item">',
+      '#suffix' => '</div>',
+      '#value'  => t('Here you can define some style settings for each field.'),
+    );
+    
+    
+    $form['layout']['columns'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Number of columns or argument number'),
+      '#default_value' => isset($this->options['layout']['columns']) ? $this->options['layout']['columns'] : 3,
+      '#required' => TRUE,
+      //'#element_validate' => array('views_element_validate_integer'),
+    );
+    
+    $form['layout']['use_args']   = array(
+        '#type'          => 'checkbox',
+        '#title'         => t('Use a view argument for number of columns'),
+        '#default_value' => isset($this->options['layout']['use_args']) ? $this->options['layout']['use_args'] : 0,
+      );
+    
 
     foreach ($this->display->handler->get_handlers('field') as $id => $handler) {
       $info = field_read_field($id);
