@@ -40,14 +40,14 @@ class Fields extends views_plugin_row {
       else {
         $options = array();
       }
-      
+
       //new function for the grid layout
-      
+
  //      $tokens = $this->get_render_tokens('');
 //      $args = array();
 //      foreach ($this->options['columns'] as $arg) {
 //       $this->options['columns'] = str_replace(array_keys($tokens), $tokens, $this->options['columns']);
-      
+
       if ($this->options['layout']['use_args'] == TRUE) {
          $column_count = $this->view->args[(1 - $this->options['layout']['columns'])];
       } else {
@@ -69,8 +69,7 @@ class Fields extends views_plugin_row {
     $this->view->pdf->resetRowPageNumber();
 
   }
-  
-  
+
   /**
    * Option definitions.
    */
@@ -119,8 +118,8 @@ class Fields extends views_plugin_row {
  * Set Columns.
  */
 
-   // Argument stuff. 
-//       $form['args'][$i] = array(
+   // Argument stuff.
+   //       $form['args'][$i] = array(
 //         '#type' => 'textfield',
 //         '#title' => t('Argument #%number', array('%number' => ($i+1))),
 //         '#default_value' => $this->options['args'][$i],
@@ -155,9 +154,9 @@ class Fields extends views_plugin_row {
       }
     }
  */
- 
- /*   
-    $form['alter']['help'] = array(
+
+ /*
+     $form['alter']['help'] = array(
       '#type' => 'hidden',
       '#id' => 'views-tokens-help',
       '#prefix' => '<div><fieldset id="views-tokens-help"><legend>' . t('Replacement patterns') . '</legend>' . $output . '</fieldset></div>',
@@ -168,8 +167,8 @@ class Fields extends views_plugin_row {
       '#suffix' => '</div>',
       '#value'  => t('Here you can define some style settings for each field.'),
     );
-    
-    
+
+
     $form['layout']['columns'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of columns or argument number'),
@@ -177,13 +176,13 @@ class Fields extends views_plugin_row {
       '#required' => TRUE,
       //'#element_validate' => array('views_element_validate_integer'),
     );
-    
+
     $form['layout']['use_args']   = array(
         '#type'          => 'checkbox',
         '#title'         => t('Use a view argument for number of columns'),
         '#default_value' => isset($this->options['layout']['use_args']) ? $this->options['layout']['use_args'] : 0,
       );
-    
+
 
     foreach ($this->display->handler->get_handlers('field') as $id => $handler) {
       $info = field_read_field($id);
@@ -360,14 +359,14 @@ class Fields extends views_plugin_row {
         '#title'         => t('Render As HTML'),
         '#default_value' => isset($this->options['formats'][$field]['render']['is_html']) ? $this->options['formats'][$field]['render']['is_html'] : 1,
       );
-      
+
       $form['formats'][$field]['render']['image_resolution'] = array(
         '#type'          => 'textfield',
         '#title'         => t('Image Resolution'),
         '#description'   => t('Specify image resolution in pixels per inch.'),
         '#default_value' => isset($this->options['formats'][$field]['render']['image_resolution']) ? $this->options['formats'][$field]['render']['image_resolution'] : 72,
       );
-      
+
       $form['formats'][$field]['render']['minimal_space'] = array(
         '#type'          => 'textfield',
         '#title'         => t('Minimal Space'),
@@ -386,7 +385,7 @@ class Fields extends views_plugin_row {
 //         '#description'   => t("WARNING: If you don't know the risk of using eval leave as it."),
 //         '#default_value' => !empty($this->options['formats'][$field]['render']['bypass_eval_before']) ? $this->options['formats'][$field]['render']['bypass_eval_before'] : FALSE,
 //       );
-// 
+//
 //       $form['formats'][$field]['render']['eval_after']        = array(
 //         '#type'          => 'textarea',
 //         '#title'         => t('PHP Code After Output'),
