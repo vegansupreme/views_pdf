@@ -1,0 +1,8 @@
+name: 'Views PDF Display'
+description: 'Views plugin to export a views as a PDF file.'
+package: Views
+core: 8.x
+php: '5.3'
+dependencies:
+  - views
+type: module

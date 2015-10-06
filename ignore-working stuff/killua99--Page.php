@@ -56,7 +56,7 @@ class Page extends views_plugin_display_page {
     // Generall document layout.
 
     // Defines external configuration for TCPDF library.
-    $tcpdf_path = drupal_realpath(libraries_get_path('fpdi_tcpdf'));
+    $tcpdf_path = \Drupal::service("file_system")->realpath(libraries_get_path('fpdi_tcpdf'));
     $cache_path = 'public://views_pdf_cache/';
 
     if (file_prepare_directory($cache_path, FILE_CREATE_DIRECTORY) === TRUE) {
@@ -65,7 +65,7 @@ class Page extends views_plugin_display_page {
       define('K_PATH_MAIN', dirname($_SERVER['SCRIPT_FILENAME']));
       define('K_PATH_URL', $base_url);
       define('K_PATH_FONTS', $tcpdf_path . '/vendor/tecnick.com/tcpdf/fonts/');
-      define('K_PATH_CACHE', drupal_realpath($cache_path));
+      define('K_PATH_CACHE', \Drupal::service("file_system")->realpath($cache_path));
       define('K_PATH_IMAGES', '');
       define('K_BLANK_IMAGE', $tcpdf_path . '/images/_blank.png');
       define('K_CELL_HEIGHT_RATIO', 1.25);
@@ -142,7 +142,7 @@ class Page extends views_plugin_display_page {
     $output = '';
 
     $permanen = file_default_scheme() . '://views_pdf_test.pdf';
-    $real_path = drupal_realpath($permanen);
+    $real_path = \Drupal::service("file_system")->realpath($permanen);
 
     $pdf_file = file_create_url($permanen);
 
@@ -287,7 +287,7 @@ class Page extends views_plugin_display_page {
     elseif (count($displays) == 1) {
       $display = array_shift($displays);
       if (!empty($this->view->display[$display])) {
-        $attach_to = check_plain($this->view->display[$display]->display_title);
+        $attach_to = \Drupal\Component\Utility\Html::escape($this->view->display[$display]->display_title);
       }
     }
 
@@ -691,7 +691,7 @@ class Page extends views_plugin_display_page {
         // default Drupal jQuery it will not work.
         // For upload with Ajax a iFrame is open and upload in it, because
         // normal forms are not allowed to handle directly.
-        $destination = variable_get('views_pdf_template_stream', 'public://views_pdf_templates');
+        $destination = \Drupal::config('views_pdf.settings')->get('views_pdf_template_stream');
 
         if (file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
           $file = file_save_upload('template_file', array(), $destination);

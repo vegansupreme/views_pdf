@@ -1,0 +1,8 @@
+views_pdf.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    views_pdf_template_path:
+      type: string
+    views_pdf_template_stream:
+      type: string

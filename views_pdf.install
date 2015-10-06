@@ -12,7 +12,7 @@ function views_pdf_requirements($phase) {
 
   if ($phase == 'runtime') {
     // Ensure translations don't break at install time.
-    $t = get_t();
+    $t = 't';
 
     $fpdi_tcpdf = libraries_detect('fpdi_tcpdf');
     $fpdi       = libraries_detect('fpdi');

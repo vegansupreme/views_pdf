@@ -1,13 +1,5 @@
 <?php
-
-/**
- * @file
- * Contains \Drupal\views_pdf\ViewsPdfTemplate.
- */
-
 namespace Drupal\views_pdf;
-
-use fpdi\FPDI;
 
 /**
  * The main class to generate the PDF.
@@ -247,18 +239,18 @@ class ViewsPdfBase extends FPDI {
    * Converts a hex color into an array with RGB colors.
    */
   public function convertHexColorToArray($hex) {
-    if (drupal_strlen($hex) == 6) {
-      $r = drupal_substr($hex, 0, 2);
-      $g = drupal_substr($hex, 2, 2);
-      $b = drupal_substr($hex, 4, 2);
+    if (\Drupal\Component\Utility\Unicode::strlen($hex) == 6) {
+      $r = \Drupal\Component\Utility\Unicode::substr($hex, 0, 2);
+      $g = \Drupal\Component\Utility\Unicode::substr($hex, 2, 2);
+      $b = \Drupal\Component\Utility\Unicode::substr($hex, 4, 2);
 
       return array(hexdec($r), hexdec($g), hexdec($b));
 
     }
-    elseif (drupal_strlen($hex) == 3) {
-      $r = drupal_substr($hex, 0, 1);
-      $g = drupal_substr($hex, 1, 1);
-      $b = drupal_substr($hex, 2, 1);
+    elseif (\Drupal\Component\Utility\Unicode::strlen($hex) == 3) {
+      $r = \Drupal\Component\Utility\Unicode::substr($hex, 0, 1);
+      $g = \Drupal\Component\Utility\Unicode::substr($hex, 1, 1);
+      $b = \Drupal\Component\Utility\Unicode::substr($hex, 2, 1);
 
       return array(hexdec($r), hexdec($g), hexdec($b));
 
@@ -1251,8 +1243,8 @@ class ViewsPdfBase extends FPDI {
       return self::$templateList;
     }
 
-    $files_path     = drupal_realpath('public://');
-    $template_dir   = variable_get('views_pdf_template_path', 'views_pdf_templates');
+    $files_path     = \Drupal::service("file_system")->realpath('public://');
+    $template_dir   = \Drupal::config('views_pdf.settings')->get('views_pdf_template_path');
     $dir            = $files_path . '/' . $template_dir;
     $templatesFiles = file_scan_directory($dir, '/.pdf$/', array('nomask' => '/(\.\.?|CVS)$/'), 1);
 
@@ -1277,12 +1269,12 @@ class ViewsPdfBase extends FPDI {
     }
 
     if ($row != NULL && $view != NULL && !preg_match('/\.pdf/', $template)) {
-      return drupal_realpath($row->field_data_field_file_node_values[0]['uri']);
+      return \Drupal::service("file_system")->realpath($row->field_data_field_file_node_values[0]['uri']);
     }
 
-    $template_dir = variable_get('views_pdf_template_stream', 'public://views_pdf_templates');
+    $template_dir = \Drupal::config('views_pdf.settings')->get('views_pdf_template_stream');
 
-    return drupal_realpath($template_dir . '/' . $template);
+    return \Drupal::service("file_system")->realpath($template_dir . '/' . $template);
   }
 
   /**
@@ -1297,7 +1289,7 @@ class ViewsPdfBase extends FPDI {
     $fonts = file_scan_directory(K_PATH_FONTS, '/.php$/', array('nomask'  => '/(\.\.?|CVS)$/',
                                                                 'recurse' => FALSE
       ), 1);
-    $cache = cache_get('views_pdf_cached_fonts');
+    $cache = \Drupal::cache()->get('views_pdf_cached_fonts');
 
     $cached_font_mapping = NULL;
 
@@ -1321,7 +1313,7 @@ class ViewsPdfBase extends FPDI {
 
     asort($font_mapping);
 
-    cache_set('views_pdf_cached_fonts', $font_mapping);
+    \Drupal::cache()->set('views_pdf_cached_fonts', $font_mapping);
 
     // Remove all fonts without name
     foreach ($font_mapping as $key => $font) {

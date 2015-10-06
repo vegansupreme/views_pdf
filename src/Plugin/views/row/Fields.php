@@ -153,7 +153,7 @@ class Fields extends views_plugin_row {
 
       $form['formats'][$field] = array(
         '#type'        => 'fieldset',
-        '#title'       => check_plain($option),
+        '#title'       => \Drupal\Component\Utility\Html::escape($option),
         '#collapsed'   => TRUE,
         '#collapsible' => TRUE,
       );
@@ -372,7 +372,7 @@ class Fields extends views_plugin_row {
     // default Drupal jQuery it will not work.
     // For upload with Ajax a iFrame is open and upload in it, because
     // normal forms are not allowed to handle directly.
-    $destination = variable_get('views_pdf_template_stream', 'public://views_pdf_templates');
+    $destination = \Drupal::config('views_pdf.settings')->get('views_pdf_template_stream');
 
     if (file_prepare_directory($destination, FILE_CREATE_DIRECTORY)) {
       // The file field is not called "template_file" as expected, it calls

@@ -7,8 +7,8 @@
  * creation of HTML first.
  */
 
-xautoload()->registerModulePsr4(__FILE__, 'src');
-_xautoload_register_drupal();
+//xautoload()->registerModulePsr4(__FILE__, 'src');
+//_xautoload_register_drupal();
 
 /**
  * Implements hook_views_api().
@@ -129,14 +129,26 @@ function theme_views_pdf_icon($vars) {
   $options['attributes']['class'] = 'pdf-icon';
 
   $image_path = drupal_get_path('module', 'views_pdf') . '/images/pdf.png';
-  $image      = theme('image', array(
-      'path'  => $image_path,
-      'title' => $title,
-      'alt'   => $title
-    )
-  );
+  // @FIXME
+// theme() has been renamed to _theme() and should NEVER be called directly.
+// Calling _theme() directly can alter the expected output and potentially
+// introduce security issues (see https://www.drupal.org/node/2195739). You
+// should use renderable arrays instead.
+//
+//
+// @see https://www.drupal.org/node/2195739
+// $image      = theme('image', array(
+//       'path'  => $image_path,
+//       'title' => $title,
+//       'alt'   => $title
+//     )
+//   );
+
 
   if ($image) {
-    return l($image, $path, $options);
+    // @FIXME
+// l() expects a Url object, created from a route name or external URI.
+// return l($image, $path, $options);
+
   }
 }

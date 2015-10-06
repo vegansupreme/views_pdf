@@ -1,14 +1,5 @@
 <?php
-
-/**
- * @file
- * Contains \Drupal\views_pdf\Plugin\views\style\Unformatted.
- */
-
-// We can't use name space in views 7.x-x.x
-// namespace Drupal\views_pdf\Plugin\views\style;
-
-// use Drupal\views_pdf\ViewsPdfBase;
+namespace Drupal\views_pdf;
 
 /**
  * This class holds all the funtionality used for the unformatted style plugin.

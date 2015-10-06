@@ -1,0 +1,2 @@
+views_pdf_template_path: views_pdf_templates
+views_pdf_template_stream: 'public://views_pdf_templates'
