@@ -5,13 +5,14 @@
  * Contains \Drupal\views_pdf\Plugin\views\display\PdfPage.
  */
 
-namespace Drupal\views\Plugin\views\display;
+namespace Drupal\views_pdf\Plugin\views\display;
 
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\State\StateInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\views\Plugin\views\display\Page;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

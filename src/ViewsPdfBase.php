@@ -449,7 +449,7 @@ class ViewsPdfBase extends FPDI {
       // No position match (for example header/footer)
       // Render or return
       if (is_object($view) && $key != NULL) {
-        $content = $view->field[$key]->theme($row);
+        $content = $view->field[$key]->drupal_render($row);
       }
       else {
         return;
@@ -457,7 +457,7 @@ class ViewsPdfBase extends FPDI {
 
     }
 
-    if ($key !== NULL && $view->field[$key]->theme($row) || !empty($row)) {
+    if ($key !== NULL && $view->field[$key]->drupal_render($row) || !empty($row)) {
       $this->SetX($x);
       $this->SetY($y);
       $this->renderRow($x, $y, $row, $options, $view, $key, $printLabels);
@@ -637,7 +637,7 @@ class ViewsPdfBase extends FPDI {
       // No position match (for example header/footer)
       // Render or return
       if (is_object($view) && $key != NULL) {
-        $content = $view->field[$key]->theme($row);
+        $content = $view->field[$key]->drupal_render($row);
       }
       else {
         return;
@@ -669,15 +669,14 @@ class ViewsPdfBase extends FPDI {
           $this->last_row_position = 0;
         }
       }
-      //watchdog('View PDF', $view->field[$key]->theme($row));
       $y = $y_page_position * $options['position']['height'] + $this->tMargin;
     }
-   
+
    /*
     * End column calculations.
     */
 
-    if ($key !== NULL && $view->field[$key]->theme($row) || !empty($row)) {
+    if ($key !== NULL && $view->field[$key]->drupal_render($row) || !empty($row)) {
       $this->SetX($x);
       $this->SetY($y);
       $this->renderRow($x, $y, $row, $options, $view, $key, $printLabels);
@@ -690,7 +689,7 @@ class ViewsPdfBase extends FPDI {
 
     // Render the content if it is not already:
     if (is_object($view) && $key != NULL && isset($view->field[$key]) && is_object($view->field[$key])) {
-      $content = $view->field[$key]->theme($row);
+      $content = $view->field[$key]->drupal_render($row);
     }
     elseif (is_string($row)) {
       $content = $row;
@@ -1018,7 +1017,7 @@ class ViewsPdfBase extends FPDI {
         if (!empty($column->options['exclude']) && is_object($view->field[$id])) {
           // Render the element, but dont print the output. This
           // is required to allow the use of tokens in other fields.
-          $view->field[$id]->theme($row);
+          $view->field[$id]->drupal_render($row);
           continue;
         }
 

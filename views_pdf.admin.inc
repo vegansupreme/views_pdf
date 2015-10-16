@@ -47,15 +47,17 @@ function theme_views_pdf_plugin_style_table($variables) {
     $rows[] = $row;
   }
 
-  // @FIXME
-// theme() has been renamed to _theme() and should NEVER be called directly.
-// Calling _theme() directly can alter the expected output and potentially
-// introduce security issues (see https://www.drupal.org/node/2195739). You
-// should use renderable arrays instead.
-// 
-// 
-// @see https://www.drupal.org/node/2195739
-// $output .= theme('table', array('header' => $header, 'rows' => $rows));
+// Theme is available as an element type (may have additional processing in rendering).
+$output .= array(
+  '#type' => 'table',
+  '#header' => $header,
+  '#rows' => $rows,
+  '#attributes' => array(
+    'id' => 'views_pdf-table',
+  ),
+);
+$output .= drupal_render($table);
+
 
   $output .= drupal_render_children($form);
 
