@@ -1,0 +1,16 @@
+{
+  "name": "drupal/views_pdf",
+  "type": "drupal-module",
+  "description": "Generate PDFs using Views",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "http://drupal.org/project/views_pdf",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "http://drupal.org/project/issues/views_pdf",
+    "source": "http://cgit.drupalcode.org/views_pdf"
+  },
+  "require": {
+    "setasign/fpdi-tcpdf": "dev-master"
+  }
+}
