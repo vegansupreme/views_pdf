@@ -75,7 +75,7 @@ class Fields extends views_plugin_row {
       array(
         'default' => t('-- Default --')
       ),
-      \Drupal\views_pdf\ViewsPdfBase::getAvailableFontsCleanList());
+      ViewsPdfBase::getAvailableFontsCleanList());
 
     $font_styles = array(
       'b' => t('Bold'),
@@ -85,10 +85,10 @@ class Fields extends views_plugin_row {
       'o' => t('Overline'),
     );
     $templates   = array_merge(
+      ViewsPdfBase::getAvailableTemplates(),
       array(
         t('-- None --')
-      ),
-      \Drupal\views_pdf\ViewsPdfBase::getAvailableTemplates());
+      ));
 
     $file_fields = array();
 
@@ -122,7 +122,7 @@ class Fields extends views_plugin_row {
     );
     $hyphenate = array_merge(
       $hyphenate,
-      \Drupal\views_pdf\ViewsPdfBase::getAvailableHyphenatePatterns()
+      ViewsPdfBase::getAvailableHyphenatePatterns()
     );
 
 
@@ -315,7 +315,7 @@ class Fields extends views_plugin_row {
       '#type'          => 'select',
       '#options'       => $row_templates,
       '#title'         => t('Template PDF'),
-      '#description'   => t('Here you specify a PDF file on which the content is printed. The first page of this document is used for the first page, in the target document. The second page is used for the second page in the target document and so on. If the target document has more that this template file, the last page of the template will be repeated. The leading document has no effect on the order of the pages. This option does not override the same option for the whole document. This template will be applyed addtionaly. The page format is defined by the document template, if it is defined.'),
+      '#description'   => t('Here you specify a PDF file on which the content is printed. The first page of this document is used for the first page, in the target document. The second page is used for the second page in the target document and so on. If the target document has more that this template file, the last page of the template will be repeated. The leading document has no effect on the order of the pages. This option does not override the same option for the whole document. This template will be applied additionally. The page format is defined by the document template, if it is defined.'),
       '#default_value' => $this->options['template'],
     );
 

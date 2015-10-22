@@ -30,7 +30,7 @@ class PageBreak extends views_handler_field {
   }
 
   /**
-   * This method contains the defintion of the options for the page break.
+   * This method contains the definition of the options for the page break.
    */
   function option_definition() {
     $options = parent::option_definition();

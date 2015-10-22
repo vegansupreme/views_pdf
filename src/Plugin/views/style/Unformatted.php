@@ -11,7 +11,7 @@
 // use Drupal\views_pdf\ViewsPdfBase;
 
 /**
- * This class holds all the funtionality used for the unformatted style plugin.
+ * This class holds all the functionality used for the unformatted style plugin.
  *
  * @ingroup views_style_plugins
  */

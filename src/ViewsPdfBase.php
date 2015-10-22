@@ -329,20 +329,20 @@ class ViewsPdfBase extends FPDI {
     // that we have enough space left on this page. If not force adding
     // a new one.
     if (isset($options['render']['minimal_space'])) {
-      $enoughtSpace = ($this->y + $this->bMargin + $options['render']['minimal_space']) < $pageDim['hk'];
+      $enough_space = ($this->y + $this->bMargin + $options['render']['minimal_space']) < $pageDim['hk'];
     }
     else {
-      $enoughtSpace = TRUE;
+      $enough_space = TRUE;
     }
 
 
     // Check if there is a page, if not add it:
-    if (!$enoughtSpace OR $this->getPage() == 0 OR $this->addNewPageBeforeNextContent == TRUE) {
+    if (!$enough_space OR $this->getPage() == 0 OR $this->addNewPageBeforeNextContent == TRUE) {
       $this->addNewPageBeforeNextContent = FALSE;
       $this->addPage();
     }
 
-    // Get the page dimenstions again, because it can be that a new
+    // Get the page dimensions again, because it can be that a new
     // page was added with new dimensions.
     $pageDim = $this->getPageDimensions();
 
@@ -355,7 +355,7 @@ class ViewsPdfBase extends FPDI {
       $last_writing_y_position = $this->y;
     }
 
-    // Determin the x and y coordinates
+    // Determine the x and y coordinates
     if ($options['position']['object'] == 'last_position') {
       $x = $this->x + $options['position']['x'];
       $y = $this->y + $options['position']['y'];
@@ -515,10 +515,10 @@ class ViewsPdfBase extends FPDI {
     // that we have enough space left on this page. If not force adding
     // a new one.
     if (isset($options['render']['minimal_space'])) {
-      $enoughtSpace = ($this->y + $this->bMargin + $options['render']['minimal_space']) < $pageDim['hk'];
+      $enough_space = ($this->y + $this->bMargin + $options['render']['minimal_space']) < $pageDim['hk'];
     }
     else {
-      $enoughtSpace = TRUE;
+      $enough_space = TRUE;
     }
 
 
@@ -529,11 +529,11 @@ class ViewsPdfBase extends FPDI {
     }
 
 
-    // Get the page dimenstions again, because it can be that a new
+    // Get the page dimensions again, because it can be that a new
     // page was added with new dimensions.
     $pageDim = $this->getPageDimensions();
 /*
-    // Determine the last writting y coordinate, if we are on a new
+    // Determine the last witting y coordinate, if we are on a new
     // page we need to reset it back to the top margin.
     if ($this->lastWritingPage != $this->getPage() OR ($this->y + $this->bMargin) > $pageDim['hk']) {
       $last_writing_y_position = $this->tMargin;
@@ -543,7 +543,7 @@ class ViewsPdfBase extends FPDI {
     }
 */
 
-    // Determin the x and y coordinates
+    // Determine the x and y coordinates
     if ($options['position']['object'] == 'last_position') {
       $x = $this->x + $options['position']['x'];
       $y = $this->y + $options['position']['y'];
@@ -805,7 +805,7 @@ class ViewsPdfBase extends FPDI {
     $this->SetFont($font_family, implode('', $font_style), $font_size);
 
     // Save the last page before starting writing, this
-    // is needed to dected if we write over a page. Then we need
+    // is needed to detect if we write over a page. Then we need
     // to reset the y coordinate for the 'last_writing' position option.
     $this->lastWritingPage = $this->getPage();
 
@@ -1041,7 +1041,7 @@ class ViewsPdfBase extends FPDI {
 
         $x += $bodyOptions['position']['width'];
 
-        // If the cell is writting over the row, we need to adjust the
+        // If the cell is writing over the row, we need to adjust the
         // row y position.
         if (($rowY + $options['position']['row_height']) < $this->y) {
           $rowY = $this->y - $options['position']['row_height'];

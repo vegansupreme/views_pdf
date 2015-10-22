@@ -43,7 +43,7 @@ class Page extends views_plugin_display_page {
    * {@inheritdoc}
    */
   function render($path_to_store_pdf = '', $destination = 'I') {
-    // Generall document layout.
+    // General document layout.
 
     // Defines external configuration for TCPDF library.
     $tcpdf_path = \Drupal::service("file_system")->realpath(libraries_get_path('fpdi_tcpdf'));
@@ -377,14 +377,14 @@ class Page extends views_plugin_display_page {
           '#title'         => t('Default Page Format'),
           '#required'      => TRUE,
           '#options'       => \Drupal\views_pdf\ViewsPdfBase::getPageFormat(),
-          '#description'   => t('This is the default page format. If you specifiy a different format in the template section, this settings will be override.'),
+          '#description'   => t('This is the default page format. If you specify a different format in the template section, this settings will be override.'),
           '#default_value' => $this->get_option('default_page_format'),
         );
 
         $form['default_page_format_custom'] = array(
           '#type'          => 'textfield',
           '#title'         => t('Custom Page Format'),
-          '#description'   => t('Here you can specifiy a custom page format. The schema is "[width]x[height]".'),
+          '#description'   => t('Here you can specify a custom page format. The schema is "[width]x[height]".'),
           '#default_value' => $this->get_option('default_page_format_custom'),
         );
 
