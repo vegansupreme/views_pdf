@@ -6,7 +6,7 @@
  */
 
 // We can't use name space in views 7.x-x.x
-// namespace Drupal\views_pdf\Plugin\views\row;
+namespace Drupal\views_pdf\Plugin\views\row;
 
 // use Drupal\views_pdf\ViewsPdfBase;
 
